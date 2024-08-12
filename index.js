@@ -4,6 +4,7 @@ require("dotenv").config();
 const fs = require("fs");
 const { google } = require("googleapis");
 const apikeys = require("./apikey.json");
+const moment = require('moment-timezone');
 
 //authorize with google
 const SCOPE = ["https://www.googleapis.com/auth/drive"];
@@ -92,8 +93,15 @@ app.message(async ({ message, context }) => {
   const userId = message.user;
   const text = message.text;
   const timestamp = parseFloat(message.ts);
-  const messageTime = new Date(timestamp * 1000).toLocaleTimeString();
-  const currentDate = new Date(timestamp * 1000).toISOString().split("T")[0];
+  // const messageTime = new Date(timestamp * 1000).toLocaleTimeString();
+  // const currentDate = new Date(timestamp * 1000).toISOString().split("T")[0];
+  const messageTime = moment(timestamp * 1000)
+  .tz("Asia/Karachi")
+  .format("HH:mm:ss");
+
+const currentDate = moment(timestamp * 1000)
+  .tz("Asia/Karachi")
+  .format("YYYY-MM-DD");
 
   try {
     const userInfo = await app.client.users.info({

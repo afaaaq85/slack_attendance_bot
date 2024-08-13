@@ -1,10 +1,10 @@
-const { App,ExpressReceiver  } = require("@slack/bolt");
+const { App, ExpressReceiver } = require("@slack/bolt");
 const ExcelJS = require("exceljs");
 require("dotenv").config();
 const fs = require("fs");
 const { google } = require("googleapis");
 const apikeys = require("./apikey.json");
-const moment = require('moment-timezone');
+const moment = require("moment-timezone");
 
 //authorize with google
 const SCOPE = ["https://www.googleapis.com/auth/drive"];
@@ -31,8 +31,8 @@ const uploadFile = async (authClient) => {
       // Search for the file by name in the specified folder
       const searchResponse = await drive.files.list({
         q: `name='${fileName}' and '${folderId}' in parents`,
-        fields: 'files(id, name)',
-        spaces: 'drive',
+        fields: "files(id, name)",
+        spaces: "drive",
       });
 
       // If the file exists, get its ID
@@ -40,7 +40,7 @@ const uploadFile = async (authClient) => {
         fileId = searchResponse.data.files[0].id;
       }
     } catch (error) {
-      return reject('Error searching for file: ' + error.message);
+      return reject("Error searching for file: " + error.message);
     }
 
     const media = {
@@ -66,7 +66,7 @@ const uploadFile = async (authClient) => {
         resolve(createResponse.data);
       }
     } catch (error) {
-      reject('Error uploading file: ' + error.message);
+      reject("Error uploading file: " + error.message);
     }
   });
 };
@@ -74,7 +74,6 @@ const uploadFile = async (authClient) => {
 const receiver = new ExpressReceiver({
   signingSecret: process.env.SIGNING_SECRET,
 });
-
 
 const app = new App({
   token: process.env.SLACK_TOKEN,
@@ -96,12 +95,12 @@ app.message(async ({ message, context }) => {
   // const messageTime = new Date(timestamp * 1000).toLocaleTimeString();
   // const currentDate = new Date(timestamp * 1000).toISOString().split("T")[0];
   const messageTime = moment(timestamp * 1000)
-  .tz("Asia/Karachi")
-  .format("HH:mm:ss");
+    .tz("Asia/Karachi")
+    .format("HH:mm:ss");
 
-const currentDate = moment(timestamp * 1000)
-  .tz("Asia/Karachi")
-  .format("YYYY-MM-DD");
+  const currentDate = moment(timestamp * 1000)
+    .tz("Asia/Karachi")
+    .format("YYYY-MM-DD");
 
   try {
     const userInfo = await app.client.users.info({
@@ -224,13 +223,11 @@ async function updateExcelFile() {
   authorizeGoogleConnection().then(uploadFile).catch(console.error);
 }
 
-receiver.router.get('/status', (req, res) => {
-  res.status(200).send('Server is running!');
+receiver.router.get("/status", (req, res) => {
+  res.status(200).send("Server is running!");
 });
 
 (async () => {
   await app.start(process.env.PORT);
   console.log("⚡️ Slack Bolt app is running!");
 })();
-
-

@@ -433,7 +433,7 @@ async function updateExcelFile() {
   }
 
   await workbook.xlsx.writeFile(filePath);
-  // authorizeGoogleConnection().then(uploadFile).catch(console.error);
+  authorizeGoogleConnection().then(uploadFile).catch(console.error);
 }
 
 receiver.router.get("/status", (req, res) => {
